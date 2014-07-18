@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta charset="utf-8" />
-<title>jQuery UI Autocomplete - Default functionality</title>
+<title>jQuery autocomplete with SockJS</title>
 <link rel="stylesheet"
 	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
@@ -102,8 +102,12 @@
 				}
 			},
 			
-			select:  function(event, row){        
-                location.href = row.item.payload.href;
+			select:  function(event, row){  
+				if(row.item.payload.href.startsWith("http")){
+					location.href =  row.item.payload.href;
+				} else {
+					location.href = "http://"+row.item.payload.href;
+				}
             }
 		/*
 		 * Set the render engine
