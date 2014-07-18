@@ -67,7 +67,7 @@
 				ac_data = $.map(DATA.suggestionList, function(suggestItem) {
 					return {
 						label : suggestItem[0],
-						payload : suggestItem[1]
+						payload : JSON.parse(suggestItem[1])
 					}
 				});
 				ac_response(ac_data);
