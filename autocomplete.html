@@ -11,11 +11,10 @@
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
 <script>
-	// Constants
-	//SOCKJS_PROXY = 'http://134.93.130.181';
+	// SOCKJS_PROXY = 'http://134.93.130.181';
 	SOCKJS_PROXY = 'http://localhost:8080';
 	
-	TIMEOUT = 1000; // ms after the last AC request the socket will be closed
+	TIMEOUT = 10000; // ms after the last AC request the socket will be closed
 	
 
 	sockIsOpen = false;
@@ -63,15 +62,14 @@
 
 		sock.onmessage = function(e) {
 			if(e.data){
+				console.log("Server answer:" + e.data);
 				DATA = JSON.parse(e.data)
-				console.log("Server answer:" + DATA);
 				ac_data = $.map(DATA.suggestionList, function(suggestItem) {
 					return {
-						label : suggestItem.suggestion,
-						value : suggestItem.key
+						label : suggestItem[0],
+						payload : suggestItem[1]
 					}
 				});
-	
 				ac_response(ac_data);
 			}
 		};
@@ -82,18 +80,12 @@
 		input = $("#in");
 
 		/*
-		 * Open the second whenever the user clicks the input or moves the 
+		 * Open the socket whenever the user clicks the input or moves the
 		 * cursor over it
 		 */
 		input.focus(openSocketIfClosed);
 		input.mouseover(openSocketIfClosed)
 
-		// REM:
-		// 'sockjsproxy' has to be started before the script can be used.
-		// use '-v' to turn on verbose logging of received messages.
-		//openSocket();
-
-		// register AC for input field #tags
 		input.autocomplete({
 			delay : 0, // no delay
 			source : function(request, ac_response) {
@@ -108,8 +100,21 @@
 					resetSocketTimeout();
 					ACHandler(request, ac_response);
 				}
-			}
-		});
+			},
+			
+			select:  function(event, row){        
+                location.href = row.item.payload.href;
+            }
+		/*
+		 * Set the render engine
+		 */
+		}).data("ui-autocomplete")._renderItem = function( ul, item ) {
+			var innerHTML = '<a><div class = "list_item_container" style="width:500px;"><div style="float:left; width:120px;"><img src="'+item.payload.img+'"></div><div style="float:left; width:300px; margin:8px; padding:8px;">' + item.label  +  '</div></div><br style="clear:both;"></a>';
+			return $( "<li></li>" )
+            	.data( "item.autocomplete", item )
+            	.append( innerHTML )
+            	.appendTo( ul );
+    };
 	});
 </script>
 
