@@ -12,8 +12,8 @@
 
 <script>
 	// Constants
-	SOCKJS_PROXY = 'http://134.93.130.181';
-	//SOCKJS_PROXY = 'http://localhost:8080';
+	//SOCKJS_PROXY = 'http://134.93.130.181';
+	SOCKJS_PROXY = 'http://localhost:8080';
 	
 	TIMEOUT = 1000; // ms after the last AC request the socket will be closed
 	
@@ -57,13 +57,14 @@
 	}
 
 	function ACHandler(request, ac_response) {
-		console.log("AC REQ:" + request.term);
+		console.log("AC request:" + request.term);
 
 		sock.send(request.term);
 
 		sock.onmessage = function(e) {
 			if(e.data){
 				DATA = JSON.parse(e.data)
+				console.log("Server answer:" + DATA);
 				ac_data = $.map(DATA.suggestionList, function(suggestItem) {
 					return {
 						label : suggestItem.suggestion,
@@ -118,7 +119,7 @@
 
 	<div class="ui-widget">
         <form>
-		  <label for="in"> Suche: </label> <input id="in" />
+		  <label for="in"> Search: </label> <input id="in" />
         </form>
 	</div>
 </body>
