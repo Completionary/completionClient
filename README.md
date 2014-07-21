@@ -11,12 +11,12 @@ This script is intended to speak with a completion server that returns the sugge
 {"suggestionList":
   [
     [ "$Label1",
-      { "img":"data:image/jpg;base64,$imageInBase64", 
-        "href":"$URL1"}
+      "{"img":"data:image/jpg;base64,$imageInBase64", 
+        "href":"$URL1"}"
     ],
     ["$Label2",
-      { "img":"$imageURI",
-        "href":"$URL2"}
+      "{"img":"$imageURI",
+        "href":"$URL2"}"
     ]
   ]
 }
