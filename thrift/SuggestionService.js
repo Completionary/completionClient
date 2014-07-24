@@ -171,12 +171,18 @@ SuggestionServiceClient = function(input, output) {
     this.seqid = 0;
 };
 SuggestionServiceClient.prototype = {};
-SuggestionServiceClient.prototype.findSuggestionsFor = function(index, query, k) {
-  this.send_findSuggestionsFor(index, query, k);
-  return this.recv_findSuggestionsFor();
+SuggestionServiceClient.prototype.findSuggestionsFor = function(index, query, k, callback) {
+  if (callback === undefined) {
+    this.send_findSuggestionsFor(index, query, k);
+    return this.recv_findSuggestionsFor();
+  } else {
+    var postData = this.send_findSuggestionsFor(index, query, k, true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_findSuggestionsFor);
+  }
 };
 
-SuggestionServiceClient.prototype.send_findSuggestionsFor = function(index, query, k) {
+SuggestionServiceClient.prototype.send_findSuggestionsFor = function(index, query, k, callback) {
   this.output.writeMessageBegin('findSuggestionsFor', Thrift.MessageType.CALL, this.seqid);
   var args = new SuggestionService_findSuggestionsFor_args();
   args.index = index;
@@ -184,7 +190,7 @@ SuggestionServiceClient.prototype.send_findSuggestionsFor = function(index, quer
   args.k = k;
   args.write(this.output);
   this.output.writeMessageEnd();
-  return this.output.getTransport().flush();
+  return this.output.getTransport().flush(callback);
 };
 
 SuggestionServiceClient.prototype.recv_findSuggestionsFor = function() {

@@ -15,8 +15,10 @@
     <script src="thrift/SuggestionService.js"></script>
 
 <script>
-    //HOST = 'http://134.93.130.181';
-    HOST = 'http://localhost:8000/asdf';
+
+
+    // HOST = 'http://134.93.130.181';
+    HOST = 'http://localhost:8000/';
     
     var transport = new Thrift.Transport(HOST);
     var protocol  = new Thrift.Protocol(transport);
@@ -29,20 +31,19 @@
         console.log("AC request:" + request.term);
 
         try {
-            result = client.findSuggestionsFor('index', request.term, 10);
-            console.log(result);
+            results = client.findSuggestionsFor('index', request.term, 10);
         } catch(ouch){
             console.log(ouch);
         }
-        
-        console.log("Server answer:" + result);
-        DATA = JSON.parse(result);
-        ac_data = $.map(DATA.suggestionList, function(suggestItem) {
-            return {
-                label : suggestItem[0],
-                payload : JSON.parse(suggestItem[1])
-            }
+
+        ac_data = $.map(results, function(suggestItem) {
+        	return {
+    			label : suggestItem.suggestion,
+    			payload : JSON.parse(suggestItem.payload)
+    			//payload : JSON.parse(suggestItem.payload)
+    		}
         });
+        
         ac_response(ac_data);
     };
 
@@ -66,8 +67,8 @@
                 }
             }
         /*
-         * Set the render engine
-         */
+		 * Set the render engine
+		 */
         }).data("ui-autocomplete")._renderItem = function( ul, item ) {
             var innerHTML = '<a><div class = "list_item_container" style="width:500px;"><div style="float:left; width:120px;"><img src="'+item.payload.img+'"></div><div style="float:left; width:300px; margin:8px; padding:8px;">' + item.label  +  '</div></div><br style="clear:both;"></a>';
             return $( "<li></li>" )
