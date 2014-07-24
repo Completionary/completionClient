@@ -16,9 +16,10 @@
 
 <script>
 
-
+	// Maximum Number of suggestions per query
+	var k = 10;
     // HOST = 'http://134.93.130.181';
-    HOST = 'http://localhost:8000/';
+    var HOST = 'http://localhost:8000/';
     
     var transport = new Thrift.Transport(HOST);
     var protocol  = new Thrift.Protocol(transport);
@@ -31,20 +32,21 @@
         console.log("AC request:" + request.term);
 
         try {
-            results = client.findSuggestionsFor('index', request.term, 10);
+            client.findSuggestionsFor('index', request.term, k, function(results) {
+                ac_data = $.map(results, function(suggestItem) {
+                	return {
+            			label : suggestItem.suggestion,
+            			payload : JSON.parse(suggestItem.payload)
+            			// payload : JSON.parse(suggestItem.payload)
+            		}
+                });
+                
+                ac_response(ac_data);
+                
+            } );
         } catch(ouch){
             console.log(ouch);
         }
-
-        ac_data = $.map(results, function(suggestItem) {
-        	return {
-    			label : suggestItem.suggestion,
-    			payload : JSON.parse(suggestItem.payload)
-    			//payload : JSON.parse(suggestItem.payload)
-    		}
-        });
-        
-        ac_response(ac_data);
     };
 
     $(document).ready(function() {
