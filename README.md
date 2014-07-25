@@ -14,7 +14,6 @@ The [[feature/thrift|https://github.com/Completionary/SockJScompletion/tree/feat
  */
 struct Suggestion {
         1: string suggestion;
-        //will be a JSON and we have to specify supported base format
         2: string payload;
 }
 
