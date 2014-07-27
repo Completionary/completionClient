@@ -18,8 +18,8 @@
 
 	// Maximum Number of suggestions per query
 	var k = 10;
-    // HOST = 'http://134.93.130.181';
-    var HOST = 'http://localhost:8000/';
+    var HOST = 'http://metalcon2.physik.uni-mainz.de:8080/completionServer';
+    //var HOST = 'http://localhost:8000/';
     
     var transport = new Thrift.Transport(HOST);
     var protocol  = new Thrift.Protocol(transport);
@@ -32,7 +32,7 @@
         console.log("AC request:" + request.term);
 
         try {
-            client.findSuggestionsFor('index', request.term, k, function(results) {
+            client.findSuggestionsFor('wikipediaindex', request.term, k, function(results) {
                 ac_data = $.map(results, function(suggestItem) {
                 	return {
             			label : suggestItem.suggestion,
