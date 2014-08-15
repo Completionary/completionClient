@@ -10,7 +10,8 @@
 SuggestionService_findSuggestionsFor_args = function(args) {
   this.index = null;
   this.query = null;
-  this.k = null;
+  this.numberOfSuggestions = null;
+  this.userData = null;
   if (args) {
     if (args.index !== undefined) {
       this.index = args.index;
@@ -18,8 +19,11 @@ SuggestionService_findSuggestionsFor_args = function(args) {
     if (args.query !== undefined) {
       this.query = args.query;
     }
-    if (args.k !== undefined) {
-      this.k = args.k;
+    if (args.numberOfSuggestions !== undefined) {
+      this.numberOfSuggestions = args.numberOfSuggestions;
+    }
+    if (args.userData !== undefined) {
+      this.userData = args.userData;
     }
   }
 };
@@ -53,7 +57,15 @@ SuggestionService_findSuggestionsFor_args.prototype.read = function(input) {
       break;
       case 3:
       if (ftype == Thrift.Type.I16) {
-        this.k = input.readI16().value;
+        this.numberOfSuggestions = input.readI16().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.userData = new AnalyticsData();
+        this.userData.read(input);
       } else {
         input.skip(ftype);
       }
@@ -79,9 +91,14 @@ SuggestionService_findSuggestionsFor_args.prototype.write = function(output) {
     output.writeString(this.query);
     output.writeFieldEnd();
   }
-  if (this.k !== null && this.k !== undefined) {
-    output.writeFieldBegin('k', Thrift.Type.I16, 3);
-    output.writeI16(this.k);
+  if (this.numberOfSuggestions !== null && this.numberOfSuggestions !== undefined) {
+    output.writeFieldBegin('numberOfSuggestions', Thrift.Type.I16, 3);
+    output.writeI16(this.numberOfSuggestions);
+    output.writeFieldEnd();
+  }
+  if (this.userData !== null && this.userData !== undefined) {
+    output.writeFieldBegin('userData', Thrift.Type.STRUCT, 4);
+    this.userData.write(output);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -113,19 +130,19 @@ SuggestionService_findSuggestionsFor_result.prototype.read = function(input) {
     {
       case 0:
       if (ftype == Thrift.Type.LIST) {
-        var _size8 = 0;
-        var _rtmp312;
+        var _size0 = 0;
+        var _rtmp34;
         this.success = [];
-        var _etype11 = 0;
-        _rtmp312 = input.readListBegin();
-        _etype11 = _rtmp312.etype;
-        _size8 = _rtmp312.size;
-        for (var _i13 = 0; _i13 < _size8; ++_i13)
+        var _etype3 = 0;
+        _rtmp34 = input.readListBegin();
+        _etype3 = _rtmp34.etype;
+        _size0 = _rtmp34.size;
+        for (var _i5 = 0; _i5 < _size0; ++_i5)
         {
-          var elem14 = null;
-          elem14 = new Suggestion();
-          elem14.read(input);
-          this.success.push(elem14);
+          var elem6 = null;
+          elem6 = new Suggestion();
+          elem6.read(input);
+          this.success.push(elem6);
         }
         input.readListEnd();
       } else {
@@ -149,17 +166,239 @@ SuggestionService_findSuggestionsFor_result.prototype.write = function(output) {
   if (this.success !== null && this.success !== undefined) {
     output.writeFieldBegin('success', Thrift.Type.LIST, 0);
     output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
-    for (var iter15 in this.success)
+    for (var iter7 in this.success)
     {
-      if (this.success.hasOwnProperty(iter15))
+      if (this.success.hasOwnProperty(iter7))
       {
-        iter15 = this.success[iter15];
-        iter15.write(output);
+        iter7 = this.success[iter7];
+        iter7.write(output);
       }
     }
     output.writeListEnd();
     output.writeFieldEnd();
   }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SuggestionService_onSearchSessionFinished_args = function(args) {
+  this.index = null;
+  this.userData = null;
+  if (args) {
+    if (args.index !== undefined) {
+      this.index = args.index;
+    }
+    if (args.userData !== undefined) {
+      this.userData = args.userData;
+    }
+  }
+};
+SuggestionService_onSearchSessionFinished_args.prototype = {};
+SuggestionService_onSearchSessionFinished_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.index = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.userData = new AnalyticsData();
+        this.userData.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SuggestionService_onSearchSessionFinished_args.prototype.write = function(output) {
+  output.writeStructBegin('SuggestionService_onSearchSessionFinished_args');
+  if (this.index !== null && this.index !== undefined) {
+    output.writeFieldBegin('index', Thrift.Type.STRING, 1);
+    output.writeString(this.index);
+    output.writeFieldEnd();
+  }
+  if (this.userData !== null && this.userData !== undefined) {
+    output.writeFieldBegin('userData', Thrift.Type.STRUCT, 2);
+    this.userData.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SuggestionService_onSearchSessionFinished_result = function(args) {
+};
+SuggestionService_onSearchSessionFinished_result.prototype = {};
+SuggestionService_onSearchSessionFinished_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SuggestionService_onSearchSessionFinished_result.prototype.write = function(output) {
+  output.writeStructBegin('SuggestionService_onSearchSessionFinished_result');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SuggestionService_onSuggestionSelected_args = function(args) {
+  this.index = null;
+  this.suggestionID = null;
+  this.suggestionString = null;
+  this.userData = null;
+  if (args) {
+    if (args.index !== undefined) {
+      this.index = args.index;
+    }
+    if (args.suggestionID !== undefined) {
+      this.suggestionID = args.suggestionID;
+    }
+    if (args.suggestionString !== undefined) {
+      this.suggestionString = args.suggestionString;
+    }
+    if (args.userData !== undefined) {
+      this.userData = args.userData;
+    }
+  }
+};
+SuggestionService_onSuggestionSelected_args.prototype = {};
+SuggestionService_onSuggestionSelected_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.index = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.suggestionID = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 3:
+      if (ftype == Thrift.Type.STRING) {
+        this.suggestionString = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.userData = new AnalyticsData();
+        this.userData.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SuggestionService_onSuggestionSelected_args.prototype.write = function(output) {
+  output.writeStructBegin('SuggestionService_onSuggestionSelected_args');
+  if (this.index !== null && this.index !== undefined) {
+    output.writeFieldBegin('index', Thrift.Type.STRING, 1);
+    output.writeString(this.index);
+    output.writeFieldEnd();
+  }
+  if (this.suggestionID !== null && this.suggestionID !== undefined) {
+    output.writeFieldBegin('suggestionID', Thrift.Type.STRING, 2);
+    output.writeString(this.suggestionID);
+    output.writeFieldEnd();
+  }
+  if (this.suggestionString !== null && this.suggestionString !== undefined) {
+    output.writeFieldBegin('suggestionString', Thrift.Type.STRING, 3);
+    output.writeString(this.suggestionString);
+    output.writeFieldEnd();
+  }
+  if (this.userData !== null && this.userData !== undefined) {
+    output.writeFieldBegin('userData', Thrift.Type.STRUCT, 4);
+    this.userData.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SuggestionService_onSuggestionSelected_result = function(args) {
+};
+SuggestionService_onSuggestionSelected_result.prototype = {};
+SuggestionService_onSuggestionSelected_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SuggestionService_onSuggestionSelected_result.prototype.write = function(output) {
+  output.writeStructBegin('SuggestionService_onSuggestionSelected_result');
   output.writeFieldStop();
   output.writeStructEnd();
   return;
@@ -171,23 +410,24 @@ SuggestionServiceClient = function(input, output) {
     this.seqid = 0;
 };
 SuggestionServiceClient.prototype = {};
-SuggestionServiceClient.prototype.findSuggestionsFor = function(index, query, k, callback) {
+SuggestionServiceClient.prototype.findSuggestionsFor = function(index, query, numberOfSuggestions, userData, callback) {
   if (callback === undefined) {
-    this.send_findSuggestionsFor(index, query, k);
+    this.send_findSuggestionsFor(index, query, numberOfSuggestions, userData);
     return this.recv_findSuggestionsFor();
   } else {
-    var postData = this.send_findSuggestionsFor(index, query, k, true);
+    var postData = this.send_findSuggestionsFor(index, query, numberOfSuggestions, userData, true);
     return this.output.getTransport()
       .jqRequest(this, postData, arguments, this.recv_findSuggestionsFor);
   }
 };
 
-SuggestionServiceClient.prototype.send_findSuggestionsFor = function(index, query, k, callback) {
+SuggestionServiceClient.prototype.send_findSuggestionsFor = function(index, query, numberOfSuggestions, userData, callback) {
   this.output.writeMessageBegin('findSuggestionsFor', Thrift.MessageType.CALL, this.seqid);
   var args = new SuggestionService_findSuggestionsFor_args();
   args.index = index;
   args.query = query;
-  args.k = k;
+  args.numberOfSuggestions = numberOfSuggestions;
+  args.userData = userData;
   args.write(this.output);
   this.output.writeMessageEnd();
   return this.output.getTransport().flush(callback);
@@ -212,4 +452,44 @@ SuggestionServiceClient.prototype.recv_findSuggestionsFor = function() {
     return result.success;
   }
   throw 'findSuggestionsFor failed: unknown result';
+};
+SuggestionServiceClient.prototype.onSearchSessionFinished = function(index, userData, callback) {
+  if (callback === undefined) {
+    this.send_onSearchSessionFinished(index, userData);
+  } else {
+    var postData = this.send_onSearchSessionFinished(index, userData, true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_onSearchSessionFinished);
+  }
+};
+
+SuggestionServiceClient.prototype.send_onSearchSessionFinished = function(index, userData, callback) {
+  this.output.writeMessageBegin('onSearchSessionFinished', Thrift.MessageType.CALL, this.seqid);
+  var args = new SuggestionService_onSearchSessionFinished_args();
+  args.index = index;
+  args.userData = userData;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+SuggestionServiceClient.prototype.onSuggestionSelected = function(index, suggestionID, suggestionString, userData, callback) {
+  if (callback === undefined) {
+    this.send_onSuggestionSelected(index, suggestionID, suggestionString, userData);
+  } else {
+    var postData = this.send_onSuggestionSelected(index, suggestionID, suggestionString, userData, true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_onSuggestionSelected);
+  }
+};
+
+SuggestionServiceClient.prototype.send_onSuggestionSelected = function(index, suggestionID, suggestionString, userData, callback) {
+  this.output.writeMessageBegin('onSuggestionSelected', Thrift.MessageType.CALL, this.seqid);
+  var args = new SuggestionService_onSuggestionSelected_args();
+  args.index = index;
+  args.suggestionID = suggestionID;
+  args.suggestionString = suggestionString;
+  args.userData = userData;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
 };

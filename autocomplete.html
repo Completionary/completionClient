@@ -11,15 +11,15 @@
     <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     
     <script src="thrift.js"></script>
-    <script src="thrift/services_types.js"></script>
+    <script src="thrift/suggestion_types.js"></script>
     <script src="thrift/SuggestionService.js"></script>
 
 <script>
 
 	// Maximum Number of suggestions per query
 	var k = 10;
-    var HOST = 'http://metalcon2.physik.uni-mainz.de:8080/completionServer';
-    //var HOST = 'http://localhost:8000/';
+    //var HOST = 'http://metalcon2.physik.uni-mainz.de:8080/completionServer';
+    var HOST = 'http://localhost:8000/';
     
     var transport = new Thrift.Transport(HOST);
     var protocol  = new Thrift.Protocol(transport);
@@ -32,7 +32,7 @@
         console.log("AC request:" + request.term);
 
         try {
-            client.findSuggestionsFor('wikipediaindex', request.term, k, function(results) {
+            client.findSuggestionsFor('wikipediaindex', request.term, k, new AnalyticsData({userID:1,userAgent:'userAgent'}), function(results) {
                 ac_data = $.map(results, function(suggestItem) {
                 	return {
             			label : suggestItem.suggestion,
